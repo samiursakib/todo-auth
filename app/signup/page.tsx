@@ -33,18 +33,17 @@ export default function Page() {
     }
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     try {
-      const res = await fetch('/api/signup', {
+      const res = await fetch(process.env.NEXTAUTH_URL + '/api/signup', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: values.name,
-          email: values.email,
-          password: values.password,
-          confirmPassword: values.confirmPassword
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
         })
       });
       const data = await res.json();

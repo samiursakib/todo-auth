@@ -1,21 +1,29 @@
 'use client';
 
-import { signOut, useSession } from 'next-auth/react';
-import { Button } from './components/ui/button';
+import { TodoType } from '@/types';
+import { Theme } from '@radix-ui/themes';
+import MutateTodo from './components/MutateTodo';
+import { getTodos } from './lib/server-actions';
+import { useEffect, useState } from 'react';
+import Todo from './components/Todo';
 
 export default function Home() {
-  const session = useSession();
+  const [todos, setTodos] = useState<TodoType[]>([]);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  useEffect(() => {
+    getTodos().then(res => {
+      setTodos(res);
+    }).catch(e => console.error(e));
+  }, [refresh]);
+
   return (
-    <div className='flex w-full h-screen flex-col jusitfy-center items-center mt-52'>
-      {
-        session.data?.user
-          ? <div>
-            {session.data.user.name}
-            <Button className='w-[350px]' variant='secondary' onClick={() => signOut()}>Signout</Button>
-          </div>
-          : null
-      }
-      Home page
-    </div>
+    <Theme>
+      <div className='flex w-full h-screen flex-col jusitfy-center items-center pt-16 gap-1'>
+        <div>
+          <MutateTodo action='create' setRefresh={setRefresh} />
+        </div>
+        {todos.map((todo: TodoType) => <Todo key={todo.id} todo={todo} setRefresh={setRefresh} />)}
+      </div>
+    </Theme>
   );
 }
