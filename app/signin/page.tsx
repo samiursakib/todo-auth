@@ -25,10 +25,10 @@ export default function Page() {
     }
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (formData: z.infer<typeof formSchema>) => {
     return await signIn('credentials', {
-      email: values.email,
-      password: values.password,
+      email: formData.email,
+      password: formData.password,
       redirect: true,
       callbackUrl: '/'
     });
